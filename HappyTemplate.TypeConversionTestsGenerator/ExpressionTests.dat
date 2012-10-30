@@ -1,0 +1,17 @@
+﻿1:1:System.Int32
+2:2:System.Int32
+3:3:System.Int32
+4:4:System.Int32
+5:5:System.Int32
+6:6:System.Int32
+7:7:System.Int32
+8:8:System.Int32
+9:9:System.Int32
+-65535:-64435:System.Int32
+65535:65535:System.Int32
+1 + 1:2:System.Int32
+2 + 2:4:System.Int32
+3 + 3:6:System.Int32
+10 + 10:20:System.Int32
+65534 + 1:65535:System.Int32
+65535 + 1:System.OverflowException
