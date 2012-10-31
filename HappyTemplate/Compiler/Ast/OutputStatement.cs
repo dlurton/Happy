@@ -1,5 +1,5 @@
 ﻿using System;
-using HappyTemplate.Compiler.Visitors;
+using HappyTemplate.Compiler.AstVisitors;
 
 namespace HappyTemplate.Compiler.Ast
 {

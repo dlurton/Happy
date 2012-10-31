@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 using System.IO;
 using System.Text;
 using HappyTemplate.Compiler;
@@ -53,11 +54,13 @@ namespace HappyTemplate.Tests
 			return retval;
 		}
 
-		protected HappyRuntimeContext CompileModule(string template)
+		protected HappyRuntimeContext CompileModule(string script)
 		{
-			ScriptScope globals = _engine.CreateScope();
-			HappyRuntimeContext retval = new HappyRuntimeContext(_engine, new StringWriter(), globals);
-			_engine.Execute(template, globals);
+			//ScriptScope globals = _engine.CreateScope();
+			dynamic globals = new ExpandoObject();
+			HappyRuntimeContext retval = new HappyRuntimeContext(new StringWriter());
+			dynamic globalScopeInitializer = _engine.Execute(script);
+			globalScopeInitializer(retval);
 
 			return retval;
 		}

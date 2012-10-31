@@ -2,10 +2,11 @@
 using System.IO;
 using HappyTemplate.Runtime;
 using HappyTemplate.Runtime.Trackers;
+using HappyTemplate.Tests.IntegrationTests.TestTypes;
 using Microsoft.Scripting;
 using NUnit.Framework;
 
-namespace HappyTemplate.Tests.IntegrationTests.TestTypes.IntegrationTests
+namespace HappyTemplate.Tests.IntegrationTests
 {
 	[TestFixture]
 	public class DotNetInteropTests : TestFixtureBase

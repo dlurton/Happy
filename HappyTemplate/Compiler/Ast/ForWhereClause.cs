@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HappyTemplate.Compiler.Visitors;
+using HappyTemplate.Compiler.AstVisitors;
 
 namespace HappyTemplate.Compiler.Ast
 {

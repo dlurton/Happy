@@ -1,9 +1,7 @@
 ﻿using HappyTemplate.Runtime;
 using Microsoft.Scripting;
 
-using HappyTemplate.Compiler;
-
-namespace HappyTemplate.Compiler.Walkers
+namespace HappyTemplate
 {
 	public class HappyErrorSink : ErrorSink
 	{

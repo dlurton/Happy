@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>DynamicLanguageRuntime.Net40.Unofficial</id>
+    <version>2.6.1003.1</version>
+    <title>DynamicLanguageRuntime.Net40.Unofficial</title>
+    <authors>Burt Harris</authors>
+    <owners>Burt Harris</owners>
+    <licenseUrl>http://dlr.codeplex.com/license</licenseUrl>
+    <projectUrl>http://dlr.codeplex.com/</projectUrl>
+    <iconUrl>http://blogs.microsoft.co.il/blogs/shayf/WindowsLiveWriter/GettingStartedWithDynamicLanguages_B665/280px-python_logo_2.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is an unofficial NuGet package of the .NET 4.0 compatable Dynamic Language Runtime</description>
+    <summary>Signed Dynamic Language Runtime assemblies for .NET 4.x from IronPython 2.6.1 (the last version to support .NET 2.x.</summary>
+    <tags>DLR</tags>
+  </metadata>
+</package>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using HappyTemplate.Runtime;
 
 namespace HappyTemplate.Compiler
 {
@@ -19,7 +20,10 @@ namespace HappyTemplate.Compiler
 		readonly ParameterExpression _parameter;
 
 		public override Expression GetGetExpression() { return _parameter; }
-		public override Expression GetSetExpression(Expression value) { return Expression.Assign(_parameter, value); } 
+		public override Expression GetSetExpression(Expression value)
+		{
+			return Expression.Assign(_parameter, RuntimeHelpers.EnsureObjectResult(value));
+		} 
 
 		public ParameterExpression Parameter { get { return _parameter; } }
 

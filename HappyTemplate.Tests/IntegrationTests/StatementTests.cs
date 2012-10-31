@@ -1,4 +1,5 @@
-﻿using HappyTemplate.Compiler;
+﻿using System.Collections.Generic;
+using HappyTemplate.Compiler;
 using HappyTemplate.Runtime;
 using HappyTemplate.Tests.IntegrationTests.TestTypes;
 using Microsoft.Scripting.Hosting;
@@ -227,6 +228,7 @@ while(i < 100)
 			AssertOutput("this is an array", "for(i in array) { def a = i; ~a; } ",
 				gs => gs.array = new[] { "this ", "is ", "an ", "array" }, "array");
 		}
+		
 		[Test]
 		public void DefWithInitializer()
 		{
@@ -234,9 +236,8 @@ while(i < 100)
 			rc.Globals.testFunc();
 			Assert.AreEqual("aValue", rc.OutputWriter.ToString());
 			//ensure aVariable is not part of the global scope
-			object dummy;
-			ScriptScope ss = rc.Globals;
-			Assert.IsFalse(ss.TryGetVariable("aVariable", out dummy));
+			IDictionary<string, object>  ss = rc.Globals;
+			Assert.IsFalse(ss.ContainsKey("aVariable"));
 		}
 
 		[Test]

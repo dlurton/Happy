@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Dynamic;
 using HappyTemplate.Runtime;
 using HappyTemplate.Tests.IntegrationTests.TestTypes;
-using Microsoft.Scripting.Hosting;
 using NUnit.Framework;
 
 namespace HappyTemplate.Tests.IntegrationTests
@@ -283,15 +282,25 @@ namespace HappyTemplate.Tests.IntegrationTests
 		}
 
 		[Test]
-		public void Assignment()
+		public void Assignment_Simple_String()
 		{
 			HappyRuntimeContext rc = CompileFunction(@" def aVariable; aVariable = ""aValue""; ~aVariable;");
 			rc.Globals.testFunc();
 			Assert.AreEqual("aValue", rc.OutputWriter.ToString());
 			//ensure aVariable is not part of the global scope
-			object dummy;
-			ScriptScope ss = rc.Globals;
-			Assert.IsFalse(ss.TryGetVariable("aVariable", out dummy));
+			IDictionary<string, object> ss = rc.Globals;
+			Assert.IsFalse(ss.ContainsKey("aValue"));
+		}
+
+		[Test]
+		public void Assignment_Simple_Int32()
+		{
+			HappyRuntimeContext rc = CompileFunction(@" def aVariable; aVariable = 23; ~aVariable;");
+			rc.Globals.testFunc();
+			Assert.AreEqual("23", rc.OutputWriter.ToString());
+			//ensure aVariable is not part of the global scope
+			IDictionary<string, object> ss = rc.Globals;
+			Assert.IsFalse(ss.ContainsKey("aValue"));
 		}
 
 		[Test]
@@ -332,10 +341,9 @@ function main()
 			Assert.AreEqual("begin!test template!end", rc.OutputWriter.ToString());
 
 			//ensure var1 and var2 are not part of the global scope
-			object dummy;
-			ScriptScope ss = rc.Globals;
-			Assert.IsFalse(ss.TryGetVariable("var1", out dummy));
-			Assert.IsFalse(ss.TryGetVariable("var2", out dummy));
+			IDictionary<string, object> ss = rc.Globals;
+			Assert.IsFalse(ss.ContainsKey("var1"));
+			Assert.IsFalse(ss.ContainsKey("var2"));
 		}
 
 		[Test]
@@ -475,7 +483,8 @@ function main(p1, p2)
 		{
 			const string actual = @"
 def anon = ""anonymous"";
-output = <|I am |%~anon;%|.|>;
+def output = <||%~anon;%|.|>;
+~<|I am |>;
 ~output;
 ";
 			Assert.AreEqual("I am anonymous.", Execute(actual, "output"));

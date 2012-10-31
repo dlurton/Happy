@@ -1,0 +1,39 @@
+﻿
+
+def gQuickDb = new(QuickConnection, "Data Source=(local)\\SQL2012;Initial Catalog=AdventureWorks2012;Integrated Security=Yes");
+def gTableCmd = gQuickDb.CreateCommand("SELECT * FROM sys.tables");
+def gColumnCmd = gQuickDb.CreateCommand(<|
+		SELECT 
+			c.name as column_name, 
+			t.name as [type_name],
+			c.max_length,
+			c.is_nullable,
+			t.is_user_defined AS is_user_defined_type,
+			t.*
+		FROM sys.columns c
+			JOIN sys.types t ON t.system_type_id = c.system_type_id
+		WHERE 
+			c.object_id = @object_id
+	|>);
+
+function getColumnDef(column)
+{
+	
+}
+
+function main()
+{
+	~"Hello, world!\n";
+	
+	for(table in gTableCmd.ExecuteQuery())
+	{
+		~"Found Table: " table.name "\n";
+
+		gColumnCmd.SetParameter("@object_id", table.object_id);
+		for(column in gColumnCmd.ExecuteQuery())
+		{
+			~"\tColumn: " column.name "\n";
+		}
+	}
+}
+

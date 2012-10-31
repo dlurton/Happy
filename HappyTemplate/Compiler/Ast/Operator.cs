@@ -1,4 +1,4 @@
-using HappyTemplate.Compiler.Visitors;
+using HappyTemplate.Compiler.AstVisitors;
 using HappyTemplate.Exceptions;
 
 namespace HappyTemplate.Compiler.Ast

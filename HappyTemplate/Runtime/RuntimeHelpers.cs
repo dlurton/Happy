@@ -43,11 +43,7 @@ namespace HappyTemplate.Runtime
 			}
 		}
 
-		public static void SafeWriteToTextWriter(TextWriter tw, object value)
-		{
-			if(value != null)
-				tw.Write(value.ToString());
-		}
+		
 
 		//        // Uses of the 'cons' keyword form in BinderFactory compile to a call to this
 		//        // helper function.

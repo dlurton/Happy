@@ -12,7 +12,6 @@ namespace HappyTemplate.Compiler
 
 		public string SymbolTableName { get; private set; }
 
-
 		public HappySymbolTable(string symbolTableName, HappySymbolTable parent)
 		{
 			Parent = parent;
@@ -59,9 +58,9 @@ namespace HappyTemplate.Compiler
 			return null;
 		}
 	
-		public IEnumerable<ParameterExpression> GetParameterExpressions()
+		public ParameterExpression[] GetParameterExpressions()
 		{
-			return _items.Values.Where(i => i is HappyParameterSymbol).Select(i => ((HappyParameterSymbol)i).Parameter);
+			return _items.Values.Where(i => i is HappyParameterSymbol).Select(i => ((HappyParameterSymbol)i).Parameter).ToArray();
 		}
 
 		public HappySymbolBase FindInScopeTree(string name)

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Scripting;
+using Microsoft.Scripting.Hosting;
 using Microsoft.Scripting.Runtime;
 
 namespace HappyTemplate.Runtime
@@ -16,7 +18,7 @@ namespace HappyTemplate.Runtime
 
 		public override object Run(Scope scope)
 		{
-			return _compiledLambda.DynamicInvoke(scope.Storage); 
+			return _compiledLambda; 
 		}
 	}
 }

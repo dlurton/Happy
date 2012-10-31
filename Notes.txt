@@ -1,6 +1,19 @@
 Old cmd line args:  . bw_dragonage_content sprocs.hap bw_dragonage_content_sprocs.sql
 
 TODO:
+	escape sequences not allowed in character literals (i.e. '\n' is a lexical error)
+	don't store runtime context in global scope - pass as a parameter to the global scope initializer in order to reduce dynamic call sites.
+
+	Can't use anonymous template in global initializer due to some kind of bug?
+	
+	need to include debug info so if an exception is thrown during execution line and column numbers are included:
+		http://social.microsoft.com/Forums/eu/Offtopic/thread/d731fae1-c5e4-40e2-852b-0788b0cc2ca3
+		"We are working on in-process debugging similar to how VBA debugging works in Office. It's not 100% finished yet and therefore not part of the VS 2010 release. However IronPython already uses it to enable lightweight debugging. You can learn more at http://devhawk.net/2009/07/08/MicrosoftScriptingDebugging.aspx and http://devhawk.net/2009/10/06/Lightweight+Debugging+For+Hybrid+CIronPython+Apps.aspx.
+		"You can also compile an Expression Tree to IL with debug information and use traditional PDB based VS debugger. Use Expression.DebugInfo node to add sequence point and source file information to the tree, create a TypeBuilder and a MethodBuilder via Reflection.Emit (see an example at http://msdn.microsoft.com/en-us/library/bs22fky4.aspx) and finally LambdaExpression.CompileToMethod (http://msdn.microsoft.com/en-us/library/dd728258(VS.100).aspx) to emit the IL into the MethodBuilder. You can then place breakpoints to the source files referred to by DebugInfo nodes and step thru the code using VS debugger.
+
+	using keyword
+
+	write unit tests for QuickConnection
 
 	remove beforevisitcatchall/aftervisitcatchall?
 
@@ -8,28 +21,15 @@ TODO:
 		cannot use anonymous templates in:
 			switch, for, while statement
 
-	investigate why I am using Microsft.Dynamic and Microsoft.Scripting instead of the stuff that's built into 4.5
-		(may be since 4.5 this isn't needed anymore)
-
-	use <some invalid asembly> should give correct error message
+	use <some invalid namespace> should give correct error message
 
 	increment/decrement operators
 
-	using "var" by accident doesn't seem to yield the correct error message?
-
-	review this file, particularly the "switch statement" and "in progress" headings.
-	
 	investigate use of DLR "light compiler" and/or interpreter for faster script loading times.
-
-	complete C# schema reading in SqlGen
 
 	create (interactive?) interpreter for running arbitrary scripts
 
 	further increase unit test coverage
-
-	complete SqlGen example project.
-
-	complete other example projects.
 
 	Avoid having to wrap all output expresions in an if statement to prevent null exceptions when the output expression is null
 		(call a method to be called at runtime where the output is ignore if the expression is null)

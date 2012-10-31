@@ -60,14 +60,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Dynamic">
-      <HintPath>..\3rdparty\lib\Microsoft.Dynamic.dll</HintPath>
+    <Reference Include="Microsoft.Dynamic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DynamicLanguageRuntime.Net40.Unofficial.2.6.1003.1\lib\net40\Microsoft.Dynamic.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Scripting">
-      <HintPath>..\3rdparty\lib\Microsoft.Scripting.dll</HintPath>
+    <Reference Include="Microsoft.Scripting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DynamicLanguageRuntime.Net40.Unofficial.2.6.1003.1\lib\net40\Microsoft.Scripting.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Scripting.Debugging">
-      <HintPath>..\3rdparty\lib\Microsoft.Scripting.Debugging.dll</HintPath>
+    <Reference Include="Microsoft.Scripting.Debugging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DynamicLanguageRuntime.Net40.Unofficial.2.6.1003.1\lib\net40\Microsoft.Scripting.Debugging.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data.Linq" />
@@ -228,28 +231,28 @@
     <Compile Include="Compiler\Token.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Compiler\Visitors\AnalysisContext.cs">
+    <Compile Include="Compiler\AstVisitors\AnalysisContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Compiler\Visitors\AstAnalyzer.cs" />
-    <Compile Include="Compiler\Visitors\AstExtensions.cs" />
-    <Compile Include="Compiler\Visitors\AstVisitorBase.cs">
+    <Compile Include="Compiler\AstVisitors\AstAnalyzer.cs" />
+    <Compile Include="Compiler\AstVisitors\AstExtensions.cs" />
+    <Compile Include="Compiler\AstVisitors\AstVisitorBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Compiler\Visitors\BuildSymbolTablesVisitor.cs">
+    <Compile Include="Compiler\AstVisitors\BuildSymbolTablesVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Compiler\Visitors\IGlobalScopeHelper.cs" />
-    <Compile Include="Compiler\Visitors\PreAnalyzeVisitor.cs">
+    <Compile Include="Compiler\AstVisitors\IGlobalScopeHelper.cs" />
+    <Compile Include="Compiler\AstVisitors\PreAnalyzeVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Compiler\Visitors\ResolveSymbolsVisitor.cs" />
-    <Compile Include="Compiler\Visitors\ScopedAstVisitorBase.cs" />
-    <Compile Include="Compiler\Visitors\SemanticVisitor.cs">
+    <Compile Include="Compiler\AstVisitors\ResolveSymbolsVisitor.cs" />
+    <Compile Include="Compiler\AstVisitors\ScopedAstVisitorBase.cs" />
+    <Compile Include="Compiler\AstVisitors\SemanticVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Compiler\StackExtensions.cs" />
-    <Compile Include="Compiler\Visitors\VisitorMode.cs" />
+    <Compile Include="Compiler\AstVisitors\VisitorMode.cs" />
     <Compile Include="Exceptions\AbortParseException.cs" />
     <Compile Include="Exceptions\ArgumentConversionException.cs" />
     <Compile Include="Exceptions\HappyRuntimeException.cs" />
@@ -260,6 +263,7 @@
     <Compile Include="Exceptions\UnhandledCaseException.cs" />
     <Compile Include="Exceptions\UnhandledCaseSourceException.cs" />
     <Compile Include="Exceptions\SourceException.cs" />
+    <Compile Include="HappyCompiler.cs" />
     <Compile Include="Resources\CompileErrorMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -342,7 +346,15 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HappyTemplate.Runtime.Lib\HappyTemplate.Runtime.Lib.csproj">
+      <Project>{a7b6fb53-03e7-403d-824e-a4108f78265b}</Project>
+      <Name>HappyTemplate.Runtime.Lib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

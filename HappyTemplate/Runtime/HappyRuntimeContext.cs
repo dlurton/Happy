@@ -1,33 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
+using HappyTemplate.Compiler;
+using HappyTemplate.Compiler.Ast;
+using HappyTemplate.Compiler.AstVisitors;
 using Microsoft.Scripting.Hosting;
-using Microsoft.Scripting.Hosting.Providers;
 
 namespace HappyTemplate.Runtime
 {
 	public class HappyRuntimeContext
 	{
 		readonly dynamic _globals;
-		readonly ScriptScope _globalScope;
-		readonly HappyLanguageContext _languageContext;
 
 		public dynamic Globals { get { return _globals;  } }
-		public ScriptScope GlobalScope { get { return _globalScope; } }
 		
 		readonly Stack<TextWriter> _writerStack = new Stack<TextWriter>();
 		public TextWriter OutputWriter { get { return _writerStack.Peek(); } }
 
-		//TODO:  Make internal?
-		public HappyRuntimeContext(ScriptEngine scriptEngine, TextWriter outputWriter, ScriptScope globalScope)
+		public HappyRuntimeContext(TextWriter outputWriter)
 		{
-			_languageContext = HostingHelpers.GetLanguageContext(scriptEngine) as HappyLanguageContext;
 			_writerStack.Push(outputWriter);
-			
-			_globals = globalScope;
-			_globals.__runtimeContext__ = this;
-
-			_globalScope = globalScope;
+			_globals = new ExpandoObject();
 		}
+
+		public HappyRuntimeContext() : this(new StringWriter()) { }
 
 		public StringWriter PushWriter()
 		{
@@ -45,81 +42,19 @@ namespace HappyTemplate.Runtime
 			return "";
 		}
 
-		public static HappyRuntimeContext CompileModule(string template, string configFile)
+		public void WriteToTopWriter(object obj)
 		{
-			ScriptRuntime _runtime = new ScriptRuntime(ScriptRuntimeSetup.ReadConfiguration(configFile));
-			ScriptEngine engine = _runtime.GetEngine("ht");
-			ScriptScope globals = engine.CreateScope();
-			HappyRuntimeContext retval = new HappyRuntimeContext(engine, new StringWriter(), globals);
-			engine.Execute(template, globals);
-
-			return retval;
+			_writerStack.Peek().Write(obj.ToString());
 		}
 
-		//public void LoadAssembly(string name)
-		//{
-		//    AssemblyName assemblyName = new AssemblyName(name);
-		//    Assembly assembly = Assembly.Load(assemblyName);
 
-		//    foreach (Type type in assembly.GetTypes().Where(t => t.Namespace != n	ull))
-		//    {
-		//        string[] namespaceSegments = type.Namespace.Split('.');
+		public void SafeWriteToTopWriter(object obj)
+		{
+			if(obj == null)
+				return;
 
-		//        if (!DynamicObjectHelpers.HasMember(_globals, namespaceSegments[0]))
-		//            DynamicObjectHelpers.SetMember(_globals, namespaceSegments[0],
-		//                                           new HappyNamespaceTracker(null, namespaceSegments[0]));
+			_writerStack.Peek().Write(obj.ToString());
+		}
 
-		//        HappyNamespaceTracker current = DynamicObjectHelpers.GetMember(_globals, namespaceSegments[0]);
-		//        foreach (string segment in namespaceSegments.Skip(1))
-		//        {
-		//            if (current.HasMember(segment))
-		//                current = (HappyNamespaceTracker) current.GetMember(segment);
-		//            else
-		//            {
-		//                HappyNamespaceTracker next = new HappyNamespaceTracker(current, segment);
-		//                current.SetMember(segment, next);
-		//                current = next;
-		//            }
-		//        }
-
-		//        //DynamicObjectHelpers.SetMember(current, type.Name, new HappyTypeTracker(type));
-		//        current.SetMember(type.Name, new HappyTypeTracker(/*current,*/ type));
-		//    }
-		//}
-
-
-		///// <summary>
-		///// This method is intended to be called behind the scenes by the compiled script
-		///// and should not be called directly.
-		///// </summary>
-		///// <param name="?"></param>
-		//public void UseNamespace(string[] nsSegments)
-		//{
-		//    HappyNamespaceTracker namespaceTracker = Util.CastAssert<HappyNamespaceTracker>(_globalScope.GetVariable(nsSegments[0]));
-
-		//    namespaceTracker.FindNestedNamespace(nsSegments.Skip(1));
-
-		//    foreach(var namespaceMember in namespaceTracker)
-		//        _globalScope.SetVariable(namespaceMember.Name, namespaceMember);
-		//}
-
-		//public void LoadNamespace(string name)
-		//{
-		//    TopNamespaceTracker ns = new TopNamespaceTracker();
-		//    var package ns.TryGetPackage("")
-		//}
-
-		//public object this[string key]
-		//{
-		//    get
-		//    {
-		//        return DynamicObjectHelpers.MemberAccess(_globals, key);
-		//    }
-		//    set
-		//    {
-
-		//        DynamicObjectHelpers.SetMember(_globals, key, value);
-		//    }
-		//}
 	}
 }
