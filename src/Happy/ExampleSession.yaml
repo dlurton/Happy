@@ -1,0 +1,14 @@
+﻿---
+namespace: RelayHealth.Data.Healinx.ClinicalResults
+sessionFactoryHelperName: ClinicalResultsHelper
+connectionStringName: HealinxConnectionString
+schema: dbo
+tables:
+    - name: ClinicalResultSet
+    - name: ClinicalResultPanel
+    - name: ClinicalResult
+    - name: ClinicalResultObservation
+    - name: ClinicalResultObservationDetail
+    - name: ClinicalResultObservationNote
+    - name: ClinicalResultRecipient
+---

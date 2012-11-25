@@ -1,0 +1,414 @@
+
+Old cmd line args:  . bw_dragonage_content sprocs.hap bw_dragonage_content_sprocs.sql
+
+TODO:
+
+	figure out if it makes sense to prevent SyntaxErrorException from being thrown 
+		in the call to ErrorSink.Add(...).  Perhaps just keep a collection of errors
+		and then only call ErrorSink.Add(..) in Parser.ParseModule() only if there were
+		syntax errors.  This might have bigger impact, since a lot of changes have 
+		occurred to the parser since the call to ErrorSink.Add(...) has been throwing
+		an exception, i.e. certain parts of the parser were written in such a way that
+		parsing is not expected to continue after adding an error message.  A lot of 
+		testing would be required if we make this change.
+
+    operators such as += *= /*, etc.
+
+    'specified cast is not valid':
+    if(Char.IsLetter(id[0] && !id.StartsWith("_")))
+        sb.Append("@");
+
+    empty stack when :
+    if(!(Char.IsLetter(id[0]) && id[0] != "_"[0]))
+        sb.Append("@");
+
+    def someValue = null;
+    def x = new(someValue, blah); <--throws incorrect exception
+
+    character literals i.e. 'c'... work around right now is "a"[0]
+	also make sure that characters can be appended to strings a la: a = b + 'c'
+
+
+function main()
+{
+	def var1 = System.Convert.ToInt16(123); /*<-- since we don't have a way of assinging an Int16 value*/
+    return var1 != null;
+}
+
+function main2()
+{
+	def var1 = System.Convert.ToInt16(123); /*<-- since we don't have a way of assinging an Int16 value*/
+    return null != var1; 
+}           ^ WHY IS THERE A SYNTAX ERROR HERE?
+	
+	traditional string contatenation 
+		str3 = str1 + str2?
+		(might be better than str3 = <|$str1$$str2|>
+		(NOTE:  A review of HappyBinaryOperationBinder indicates that we already made an attempt to suppor this.  Why doesn't it work?!?!?)
+
+	escape sequences not allowed in character literals (i.e. '\n' is a lexical error)
+	don't store runtime context in global scope - pass as a parameter to the global scope initializer in order to reduce dynamic call sites.
+	
+	need to include debug info so if an exception is thrown during execution line and column numbers are included:
+		http://social.microsoft.com/Forums/eu/Offtopic/thread/d731fae1-c5e4-40e2-852b-0788b0cc2ca3
+		"We are working on in-process debugging similar to how VBA debugging works in Office. It's not 100% finished yet and therefore not part of the VS 2010 release. However IronPython already uses it to enable lightweight debugging. You can learn more at http://devhawk.net/2009/07/08/MicrosoftScriptingDebugging.aspx and http://devhawk.net/2009/10/06/Lightweight+Debugging+For+Hybrid+CIronPython+Apps.aspx.
+		"You can also compile an Expression Tree to IL with debug information and use traditional PDB based VS debugger. Use Expression.DebugInfo node to add sequence point and source file information to the tree, create a TypeBuilder and a MethodBuilder via Reflection.Emit (see an example at http://msdn.microsoft.com/en-us/library/bs22fky4.aspx) and finally LambdaExpression.CompileToMethod (http://msdn.microsoft.com/en-us/library/dd728258(VS.100).aspx) to emit the IL into the MethodBuilder. You can then place breakpoints to the source files referred to by DebugInfo nodes and step thru the code using VS debugger.
+
+	using keyword
+
+	write unit tests for QuickConnection
+
+	remove beforevisitcatchall/aftervisitcatchall?
+
+	syntactic checks:
+		cannot use anonymous templates in:
+			switch, for, while statement
+
+	use <some invalid namespace> should give correct error message
+
+	increment/decrement operators
+
+	investigate use of DLR "light compiler" and/or interpreter for faster script loading times.
+
+	create (interactive?) interpreter for running arbitrary scripts
+
+	further increase unit test coverage
+
+	Avoid having to wrap all output expresions in an if statement to prevent null exceptions when the output expression is null
+		(call a method to be called at runtime where the output is ignore if the expression is null)
+
+	create classes for executing Happy snippets from other languages with syntactic sugar.
+
+Switch statement:
+	semantic check:  case value must be a literal?  If it works as a non-literal, why not let it be?
+	needs more unit tests surrounding wierd condtions, such as different types used as case values
+
+Interesting ideas:
+
+	Reduce namespace references!  For example: 
+			load "SomeDotNetAssembly";
+			SomeDotNetNameSpace.SomeNetType.SomeStaticMethod(1);
+	
+		SomeDotNetNameSpace.SomeNetType.SomeStaticMethod can be reduced at compile time!  Without reduction, this is two GetMember operations and an invoke.
+		Those two GetMember operations can be reduced to an invoke on a constant MemberInfo instead.
+	A function may only return a value -or- generate output not both?
+
+In progress:
+	-How do we handle an ambigous types in different namespaces--i.e. two classes of the same name exist in two used namespaces?
+
+	sequence (allows for(int i = 0; i < 10; ++i) like loops)
+		examples:  
+			for(i in seq(0, 9))			//equivalent to:  for(int i = 0; i < 10; ++i)
+			for(i in seq(9, 0))			//equivalent to:  for(int i = 9; i >= 0; --i)
+			for(i in seq(0, 99, 2))		//equivalent to:  for(int i = 0; i < 99; i += 2)
+		blockage:  needs common global scope first
+
+Unknowns:
+	Is there a difference between indexed properties and properties that have indexed types?
+
+Top priority TODO:
+
+	Crap!  May be need a lexer state stack--how else to ensure that %| isn't used to close a $ with multiple nested output expressions?
+
+	Operate assign operators:  += -= /= *= %=, etc
+
+	Increment decerement operators
+
+	Global script outside of function--part of the global scope initializer
+
+	do/while loop
+	
+	switch:
+		switch(expression)
+		{
+			case constant1:
+				break;
+			case constant2:
+				break;
+		}
+
+Debt:
+
+	Create unit tests to handle error conditions in BuildSymbolsVisitor
+	
+	Move existing semantic checks to SemanticVistor
+
+	Function calls use ArgumentList similarly to indexers, making '(' the function call operator in a binary expression?
+
+	Compile error handling & error messages.
+
+	Create field access tests that are the same as property access tests.  
+	
+	String concatenation unit tests
+
+	Unit tests for $variable$ Within a template's verbatim text
+
+Low priority TODO:
+
+	Ternary operator (? :)
+
+	operator ??
+
+	Interactive shell a la Symple/IronRuby/IronPython
+
+	case:
+		def b = case(exression) { 
+			constant1: value1;
+			constant2: value2;
+			constant3: value3;
+			default: value4;
+		};
+
+	Apply a number format to output without calling String.Format directly, -i.e.:  ~{mm/dd/yyyy}dateValue;, or from within verbatim: ... ${mm/dd/yyyy}dateValue$
+
+	Need some way of changing the output to a new file?  Provided by the host?
+
+	Include one script within another script
+
+	Can accessing of enums can be optimized by returing a DynamicMetaObject which returns a constant of the enum value instead of an expression generated with MakeMemberAccess?
+		(since we know that the enum exists at compile time)
+
+	try/catch/finally/using?
+
+	Variable length parameters?
+
+	Debugging information
+
+Bug:  
+	This works:
+		<$
+		def sprocName;
+		foreach(table in database.Tables between "\n\n")
+			sprocName = <{<$table.Schema ".gen_" table.Name$>}>
+			dropProcedureIfExists(sprocName)
+		next
+		$>
+	It doesn't work if you move the def inside the foreach--sprocName is undefined.
+
+
+*************************************************************************************
+Done:
+*************************************************************************************
+bug /****************************************************/ results in "invalid token '*'" 
+while loop
+	break/continue keywords for loops
+		Next step:  write unit tests for break/continue
+
+Use common global scope instead of Dictionary for all global variables and functions.
+Not (!) operator
+Need plain string concatenation operations.
+Bug: .ToString() seems to be neccessary when writing a Int32 instance property to the output.
+Bug:
+	function GenerateSprocs(database) 
+	{
+	~<|
+	--***************************************************************
+	--This code was generated by a tool.
+	--Don't modify it by hand.
+	--Database:  |%~database.Name;%|
+	--Host:  |%~Environment.MachineName;%|
+	--Date:  |%~DateTime.Now;%|
+	--***************************************************************
+	|>  /* <-- missing semicolon causes exception
+Bitwise operators
+
+
+stack empty bug:
+
+
+use System;
+
+def endl = "\r\n";
+
+def gQuickDb = new(QuickConnection, "Data Source=(local);Initial Catalog=trunk_Healinx;Integrated Security=Yes");
+def gTableCmd = gQuickDb.CreateCommand(
+    <|
+        SELECT
+            * 
+        FROM sys.tables
+     |>);
+
+def gColumnCmd = gQuickDb.CreateCommand(<|
+SELECT 
+	c.name as column_name, 
+	types.name as [type_name],
+    c.is_identity,
+	c.max_length,
+	c.precision,
+	c.scale,
+	c.is_nullable,
+	types.is_user_defined AS is_user_defined_type
+FROM sys.columns c
+	JOIN sys.types types ON types.system_type_id = c.system_type_id
+	JOIN sys.tables tables ON tables.object_id = c.object_id
+	JOIN sys.schemas schemas ON tables.schema_id = tables.schema_id
+WHERE 
+	tables.name = @table_name AND schemas.name = @schema_name
+|>);
+
+
+
+function main()
+{
+    def sessionData = QuickYaml.FromFile("ExampleSession.yaml");
+    gColumnCmd.SetParameter("@schema_name", sessionData.schema);
+~<|
+using System;
+using System.Collections.Generic;
+using NHibernate;
+using NHibernate.Cfg;
+
+namespace $sessionData.namespace$
+{
+    public class $sessionData.sessionFactoryHelperName$
+    {
+        static ISessionFactory _sessionFactory;
+
+        public static ISession OpenSession()
+        {
+            if(_sessionFactory == null)
+            {
+                _sessionFactory = new SessionFactoryProvider
+                (
+                    ConfigurationManager.ConnectionStrings["$sessionData.connectionStringName$"],
+                    mapperTypes
+                ).GetSessionFactory();
+            }
+            return _sessionFactory.OpenSession();
+        }
+
+        readonly Type[] _mapperTypes = new Type[] {
+            |% for(table in sessionData.tables between ) { def mapperName = getMapperName(table);
+                ~<|d
+            %|
+            
+
+        };
+    }
+}
+
+namespace $sessionData.namespace$.Entities
+{
+    |% for(table in sessionData.tables) { %|
+    public partial class $sanitizeId(table.name)$
+    {
+        |% 
+        gColumnCmd.SetParameter("@table_name", table.name);
+        for(column in gColumnCmd.ExecuteQuery() where column.is_identity between endl + repeat(" ", 8)) 
+            writePropertyDef(column);
+        %|
+        |%
+        for(column in gColumnCmd.ExecuteQuery() where !column.is_identity between endl + repeat(" ", 8)) 
+            writePropertyDef(column);
+        %|
+    }
+    |% } %|
+}
+
+namespace $sessionData.namespace$.Mappers
+{
+    |% 
+    for(table in sessionData.tables) { def mapperName = getMapperName(table); 
+    %|
+    public partial class mapperName : ClassMapper<mapperName>
+    {
+        partial void setupAdditionalMaps();
+        public $mapperName$()
+        {
+            |% 
+            gColumnCmd.SetParameter("@table_name", table.name);
+            for(column in gColumnCmd.ExecuteQuery() where column.is_identity between endl + repeat(" ", 12)) 
+                ~<|Id(x => x.Id, map => { map.Generator(Generators.Identity); map.Column("$column.column_name$"); });|>;
+            %|
+            |%
+            for(column in gColumnCmd.ExecuteQuery() where !column.is_identity between endl + repeat(" ", 12))
+                ~<|Property(x => x.$getColumnPropertyName(column)$, map => map.Column("$column.column_name$"));|>;
+            %|
+
+            setupAdditionalMaps();
+        }
+    }
+    |% } %|
+}
+|>;
+}
+
+/**************************************************************************************************************/
+
+function writePropertyDef(column)
+    ~<|public virtual $sqlType2CsType(column.type_name)$ $getColumnPropertyName(column)$ { get; set; }|>;
+
+function repeat(chr, number)
+    return new(System.String, chr[0], number);
+
+function getColumnPropertyName(column)
+{
+    if(column.is_identity)
+        return "Id";
+    
+    return sanitizeId(column.column_name);
+}
+
+function sanitizeId(id)
+{
+    def sb = new(System.Text.StringBuilder);
+    if(!Char.IsLetter(id[0]))
+        sb.Append("@");
+    
+    for(c in id)
+    {
+        if(Char.IsLetterOrDigit(c))
+            sb.Append(c); 
+        else
+            sb.Append("_");
+    }
+    return sb.ToString();
+}
+
+function getMapperName(table)
+{
+    return sanitizeId(table.name) + "Mapper"; 
+}
+
+
+def sqlTypeMap = new(System.Collections.Hashtable);
+function sqlType2CsType(type)
+{
+    if(sqlTypeMap.Count == 0)
+    {
+        sqlTypeMap["bigint"] = "long";
+        sqlTypeMap["binary"] = "byte[]";
+        sqlTypeMap["bit"] = "bool";
+        sqlTypeMap["char"] = "string";
+        sqlTypeMap[""] = "Char[]";
+        sqlTypeMap["datetime"] = "DateTime";
+        sqlTypeMap["decimal"] = "decimal";
+        sqlTypeMap["float"] = "double";
+        sqlTypeMap["image"] = "Byte[]";
+        sqlTypeMap["int"] = "int";
+        sqlTypeMap["money"] = "decimal";
+        sqlTypeMap["nchar"] = "string";
+        sqlTypeMap["ntext"] = "string";
+        sqlTypeMap["numeric"] = "decimal";
+        sqlTypeMap["nvarchar"] = "string";
+        sqlTypeMap["real"] = "float";
+        sqlTypeMap["smalldatetime"] = "DateTime";
+        sqlTypeMap["smallint"] = "short";
+        sqlTypeMap["smallmoney"] = "decimal";
+        sqlTypeMap["sql_variant"] = "Object *";
+        sqlTypeMap["text"] = "string";
+        sqlTypeMap["timestamp"] = "byte[]";
+        sqlTypeMap["tinyint"] = "byte";
+        sqlTypeMap["uniqueidentifier"] = "Guid";
+        sqlTypeMap["varbinary"] = "byte[]";
+        sqlTypeMap["varchar"] = "string";
+        sqlTypeMap["sysname"] = "string";
+    }
+    return sqlTypeMap[type];
+}
+
+function writeColumnNullability(c)
+{
+	if(!c.is_nullable)
+		~"?";
+}

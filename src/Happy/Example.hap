@@ -1,0 +1,326 @@
+﻿use System;
+
+def endl = "\r\n";
+
+def gQuickDb = new(QuickConnection, "Data Source=(local);Initial Catalog=trunk_Healinx;Integrated Security=Yes");
+def gTableCmd = gQuickDb.CreateCommand(
+    <|
+        SELECT
+            * 
+        FROM sys.tables
+     |>);
+
+def columnCmd = gQuickDb.CreateCommand(<|
+SELECT 
+	c.name as column_name, 
+	types.name as [type_name],
+    c.is_identity,
+	c.max_length,
+	c.precision,
+	c.scale,
+	c.is_nullable,
+	types.is_user_defined AS is_user_defined_type
+FROM sys.columns c
+	JOIN sys.types types ON types.user_type_id = c.user_type_id
+	JOIN sys.tables tables ON tables.object_id = c.object_id
+	JOIN sys.schemas schemas ON tables.schema_id = tables.schema_id
+WHERE 
+	tables.name = @table_name AND schemas.name = @schema_name
+ORDER BY column_name
+|>);
+
+
+function main(args)
+{
+    def sessionData = QuickYaml.FromFile(args[0]);
+    columnCmd.SetParameter("@schema_name", sessionData.schema);
+~<|
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using NHibernate;
+using NHibernate.Mapping.ByCode;
+using NHibernate.Mapping.ByCode.Conformist; 
+using NHibernateTests.NHibernateIntegration;
+using RelayHealth.NHibernate.Helpers;
+
+#region Session Helper
+namespace $sessionData.namespace$
+{
+    public partial class $sessionData.sessionFactoryHelperName$
+    {
+        static ISessionFactory _sessionFactory;
+
+        public static SessionHelper OpenHelper()
+        {
+            initSession();
+            var session = _sessionFactory.OpenSession();
+            return new SessionHelper(session, session.BeginTransaction());
+        }
+
+        public static ISession OpenSession()
+        {
+            initSession();   
+            return _sessionFactory.OpenSession();
+        }
+
+        static void initSession()
+        {
+            if(_sessionFactory == null)
+            {
+                var connectionString = ConfigurationManager.ConnectionStrings["$sessionData.connectionStringName$"];
+                if(connectionString == null)
+                    throw new ConfigurationErrorsException("Connection string '$sessionData.connectionStringName$' was not found in the App/web.config file");
+                _sessionFactory = new SessionFactoryProvider(connectionString.ConnectionString, _mapperTypes).GetSessionFactory();
+            }
+        }
+
+        readonly static Type[] _mapperTypes = new [] 
+        {
+            |% for(table in sessionData.tables between "," + endl + repeat(" ", 12))  
+                ~<|typeof(Mappings.$getMappingClassName(table)$)|>;
+            %|
+        };
+    }
+}
+#endregion
+
+#region Entities
+namespace $sessionData.namespace$.Entities
+{
+    |% for(table in sessionData.tables) { def tableName = sanitizeId(table); %|
+    #region $tableName$
+    public partial class $tableName$
+    {
+        |% 
+        columnCmd.SetParameter("@table_name", table);
+        for(column in columnCmd.ExecuteQuery() where column.is_identity between endl + repeat(" ", 8)) 
+            writePropertyDef(column);
+        %|
+        |%
+        for(column in columnCmd.ExecuteQuery() where !column.is_identity between endl + repeat(" ", 8)) 
+            writePropertyDef(column);
+        %|
+    }
+    #endregion
+    |% } %|
+    
+}
+#endregion
+
+#region Mappings
+namespace $sessionData.namespace$.Mappings
+{
+    |% 
+    for(table in sessionData.tables) { def mappingName = getMappingClassName(table); 
+    %|
+    #region $mappingName$
+    public partial class $mappingName$ : ClassMapping<Entities.$sanitizeId(table)$>
+    {
+        partial void setupAdditionalMaps();
+        public $mappingName$()
+        {
+            |% 
+            columnCmd.SetParameter("@table_name", table);
+            for(column in columnCmd.ExecuteQuery() where column.is_identity between endl + repeat(" ", 12)) 
+                ~<|Id(x => x.Id, map => { map.Generator(Generators.Identity); map.Column("$column.column_name$"); });|>;
+            %|
+            |%
+            for(column in columnCmd.ExecuteQuery() where !column.is_identity between endl + repeat(" ", 12))
+                ~<|Property(x => x.$getColumnPropertyName(column)$, map => map.Column("$column.column_name$"));|>;
+            %|
+
+            setupAdditionalMaps();
+        }
+    }
+    #endregion
+    |% } %|
+}
+#endregion
+|>;
+}
+
+function writePropertyDef(column)
+   ~<|public virtual $getCsType(column)$ $getColumnPropertyName(column)$ { get; set; }|>;
+
+function getMappingClassName(tableName)
+    return sanitizeId(tableName) + "Mapping"; 
+
+function repeat(chr, number)
+    return new(System.String, chr[0], number);
+
+function getColumnPropertyName(column)
+{
+    if(column.is_identity)
+        return "Id";
+ 
+    def safeId = sanitizeId(column.column_name);
+    if(safeId.EndsWith("ID"))
+        safeId = safeId.Substring(0, safeId.Length - 2) + "Id";
+    
+    return safeId;
+}
+
+
+def sanitizedIds = new(System.Collections.Hashtable);
+function sanitizeId(id)
+{
+    def final = sanitizedIds[id];
+    if(final == null)
+    {
+        def sb = new(System.Text.StringBuilder);
+        if(!Char.IsLetter(id[0]) && !id.StartsWith("_"))
+            sb.Append("@");
+    
+        for(c in id)
+        {
+            if(Char.IsLetterOrDigit(c))
+                sb.Append(c); 
+            else
+                sb.Append("_");
+        }
+
+        final = sb.ToString();
+        if(isKeyword(final))
+            final = "@" + final;
+
+        sanitizedIds[id] = final;
+    }
+
+    return final;
+}
+
+
+def sqlTypeMap = new(System.Collections.Hashtable);
+function getCsType(column)
+{
+    if(sqlTypeMap.Count == 0)
+    {
+        sqlTypeMap["bigint"] = "long";
+        sqlTypeMap["binary"] = "byte[]";
+        sqlTypeMap["bit"] = "bool";
+        sqlTypeMap["char"] = "string";
+        sqlTypeMap["datetime"] = "DateTime";
+        sqlTypeMap["decimal"] = "decimal";
+        sqlTypeMap["float"] = "double";
+        sqlTypeMap["image"] = "byte[]";
+        sqlTypeMap["int"] = "int";
+        sqlTypeMap["money"] = "decimal";
+        sqlTypeMap["nchar"] = "string";
+        sqlTypeMap["ntext"] = "string";
+        sqlTypeMap["numeric"] = "decimal";
+        sqlTypeMap["nvarchar"] = "string";
+        sqlTypeMap["real"] = "float";
+        sqlTypeMap["date"] = "DateTime";
+        sqlTypeMap["smalldatetime"] = "DateTime";
+        sqlTypeMap["smallint"] = "short";
+        sqlTypeMap["smallmoney"] = "decimal";
+        sqlTypeMap["sql_variant"] = "object[]" /*this isn't the right mapping for this...*/;
+        sqlTypeMap["text"] = "string";
+        sqlTypeMap["timestamp"] = "byte[]";
+        sqlTypeMap["tinyint"] = "byte";
+        sqlTypeMap["uniqueidentifier"] = "Guid";
+        sqlTypeMap["varbinary"] = "byte[]";
+        sqlTypeMap["varchar"] = "string";
+        sqlTypeMap["sysname"] = "string";
+        sqlTypeMap["xml"] = "string";
+    }
+    def csType = sqlTypeMap[column.type_name];
+
+    if(csType != "string" && column.is_nullable && !csType.EndsWith("[]"))
+            csType = csType + "?";
+
+    return csType;
+}
+
+def keywordMap = new(System.Collections.Hashtable);
+function isKeyword(id)
+{
+    if(keywordMap.Count == 0)
+    {
+        keywordMap["abstract"] = "";
+        keywordMap["as"] = "";
+        keywordMap["base"] = "";
+        keywordMap["bool"] = "";
+        keywordMap["break"] = "";
+        keywordMap["byte"] = "";
+        keywordMap["case"] = "";
+        keywordMap["catch"] = "";
+        keywordMap["char"] = "";
+        keywordMap["checked"] = "";
+        keywordMap["class"] = "";
+        keywordMap["const"] = "";
+        keywordMap["continue"] = "";
+        keywordMap["decimal"] = "";
+        keywordMap["default"] = "";
+        keywordMap["delegate"] = "";
+        keywordMap["do"] = "";
+        keywordMap["double"] = "";
+        keywordMap["else"] = "";
+        keywordMap["enum"] = "";
+        keywordMap["event"] = "";
+        keywordMap["explicit"] = "";
+        keywordMap["extern"] = "";
+        keywordMap["FALSE"] = "";
+        keywordMap["finally"] = "";
+        keywordMap["fixed"] = "";
+        keywordMap["float"] = "";
+        keywordMap["for"] = "";
+        keywordMap["foreach"] = "";
+        keywordMap["goto"] = "";
+        keywordMap["if"] = "";
+        keywordMap["implicit"] = "";
+        keywordMap["in"] = "";
+        keywordMap["int"] = "";
+        keywordMap["interface"] = "";
+        keywordMap["internal"] = "";
+        keywordMap["is"] = "";
+        keywordMap["lock"] = "";
+        keywordMap["long"] = "";
+        keywordMap["namespace"] = "";
+        keywordMap["new"] = "";
+        keywordMap["null"] = "";
+        keywordMap["object"] = "";
+        keywordMap["operator"] = "";
+        keywordMap["out"] = "";
+        keywordMap["override"] = "";
+        keywordMap["params"] = "";
+        keywordMap["private"] = "";
+        keywordMap["protected"] = "";
+        keywordMap["public"] = "";
+        keywordMap["readonly"] = "";
+        keywordMap["ref"] = "";
+        keywordMap["return"] = "";
+        keywordMap["sbyte"] = "";
+        keywordMap["sealed"] = "";
+        keywordMap["short"] = "";
+        keywordMap["sizeof"] = "";
+        keywordMap["stackalloc"] = "";
+        keywordMap["static"] = "";
+        keywordMap["string"] = "";
+        keywordMap["struct"] = "";
+        keywordMap["switch"] = "";
+        keywordMap["this"] = "";
+        keywordMap["throw"] = "";
+        keywordMap["TRUE"] = "";
+        keywordMap["try"] = "";
+        keywordMap["typeof"] = "";
+        keywordMap["uint"] = "";
+        keywordMap["ulong"] = "";
+        keywordMap["unchecked"] = "";
+        keywordMap["unsafe"] = "";
+        keywordMap["ushort"] = "";
+        keywordMap["using"] = "";
+        keywordMap["virtual"] = "";
+        keywordMap["volatile"] = "";
+        keywordMap["void"] = "";
+        keywordMap["while"] = "";
+    }
+    return keywordMap.ContainsKey(id);
+}
+
+function writeColumnNullability(c)
+{
+	if(!c.is_nullable)
+		~"?";
+}
