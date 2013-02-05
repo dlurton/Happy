@@ -110,27 +110,27 @@ This would output text similar to the following:
 
 ##Syntax Summary
 
-Comments:
+####Comments:
 
 	//This is a comment
 	/* 
 		this is also a comment 
 	*/
 
-Global variables:
+####Global variables:
 
 	def foo, bar = "Hello, world!";
 
 (Note the use of "def" instead of "var.")
 
-Single Line Functions:
+####Single Line Functions:
 
 	//since the curly braces are optional for if, while and for statements that have only one line
 	//why can't functions they also be optional for functions that have only one line?
 	function multiply(a, b) 
 		return a * b;
 
-Multi-line functions:
+####Multi-line functions:
 
 	function foobar(foo, bar)
     {
@@ -138,7 +138,7 @@ Multi-line functions:
 		return someOtherFunction(intermediateValue);
     }
 
-Local variables:
+####Local variables:
 
 	function example()
 	{
@@ -146,7 +146,7 @@ Local variables:
 		//... something with localFoo and localBar
 	}
 
-Branching:
+####Branching:
 
 	if(someVariable == anotherVariable)
 		Console.WriteLine("Hello, world!");
@@ -166,7 +166,7 @@ Branching:
 		break;
 	}
 
-While Loop:
+####While Loop:
 
 	while(sqlReader.Read())
 	{
@@ -180,7 +180,7 @@ While Loop:
 		Console.WriteLine("Widget {0} is ready!", row.Id);
 	}
 
-For Loop:
+####For Loop:
 
 	~"Widgets older than 1 year:"
 	for(foo in bar.Widgets where bar.Widget.Age > 1 between "\n\t")
@@ -195,7 +195,7 @@ The variable "foo" is being declared here, and like a C# `foreach` loop is scope
 
 Any string value may be specified as the between text in a `for` loop.
 
-### Object Instantiation:
+## Object Instantiation:
 
 Object instantiation looks slightly different in Happy than in other languages:
 
@@ -203,7 +203,7 @@ Object instantiation looks slightly different in Happy than in other languages:
 
 The new keyword looks like a function although it is not actually a function.  The first argument is the type.  The type can be a direct reference to the type in its namespace as in this example or it can be an instance of the System.Type class.
 
-###Using Types in .Net Assemblies
+##Using Types in .Net Assemblies
 
 Assemblies may be dynamically "referenced" at runtime by loading them with the `load` keyword:
 
@@ -211,7 +211,7 @@ Assemblies may be dynamically "referenced" at runtime by loading them with the `
 
 As in this example, if the assembly is signed with a strong name you must specify the fully qualified assembly name.  If the assembly is not strong named you may simply use the assembly's filename without the extension.
 
-###Using Classes and Namespaces
+##Using Classes and Namespaces
 
 Indivual types may be placed in the global scope easily by simply assigning them to a global variable:
 	
