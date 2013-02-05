@@ -1,4 +1,9 @@
-
+things to do before Happy can be published as a nuget package:
+	delay sign the .dlls, do not check in the key.  (http://msdn.microsoft.com/en-us/library/t07a3dye%28v=vs.80%29.aspx)
+	create an AssemblyVersion.cs file which is then linked by all the projects and specifies the current build number.
+	learn how to create nuget packages.
+	Change the license?
+	
 Old cmd line args:  . bw_dragonage_content sprocs.hap bw_dragonage_content_sprocs.sql
 
 TODO:
