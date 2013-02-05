@@ -2,7 +2,7 @@
 
 def endl = "\r\n";
 
-def gQuickDb = new(QuickConnection, "Data Source=(local);Initial Catalog=trunk_Healinx;Integrated Security=Yes");
+def gQuickDb = new(QuickConnection, "Data Source=(local);Initial Catalog=MyDatabase;Integrated Security=Yes");
 def gTableCmd = gQuickDb.CreateCommand(
     <|
         SELECT
@@ -42,7 +42,6 @@ using NHibernate;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Mapping.ByCode.Conformist; 
 using NHibernateTests.NHibernateIntegration;
-using RelayHealth.NHibernate.Helpers;
 
 #region Session Helper
 namespace $sessionData.namespace$

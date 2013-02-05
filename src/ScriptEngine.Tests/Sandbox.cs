@@ -57,7 +57,7 @@ function foo()
 
 def endl = ""\r\n"";
 
-def gQuickDb = new(QuickConnection, ""Data Source=(local);Initial Catalog=trunk_Healinx;Integrated Security=Yes"");
+def gQuickDb = new(QuickConnection, ""Data Source=(local);Initial Catalog=trunk_DatabaseIntegrated Security=Yes"");
 def gTableCmd = gQuickDb.CreateCommand(
     <|
         SELECT

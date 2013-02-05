@@ -7,6 +7,9 @@ things to do before Happy can be published as a nuget package:
 Old cmd line args:  . bw_dragonage_content sprocs.hap bw_dragonage_content_sprocs.sql
 
 TODO:
+	First constants:  tab (\t) nl (Environment.NewLine)
+
+	check if $$ becomes $ insid verbatim text
 
 	figure out if it makes sense to prevent SyntaxErrorException from being thrown 
 		in the call to ErrorSink.Add(...).  Perhaps just keep a collection of errors
@@ -225,7 +228,7 @@ use System;
 
 def endl = "\r\n";
 
-def gQuickDb = new(QuickConnection, "Data Source=(local);Initial Catalog=trunk_Healinx;Integrated Security=Yes");
+def gQuickDb = new(QuickConnection, "Data Source=(local);Initial Catalog=trunk_database;Integrated Security=Yes");
 def gTableCmd = gQuickDb.CreateCommand(
     <|
         SELECT

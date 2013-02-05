@@ -1,14 +1,10 @@
 ﻿---
-namespace: RelayHealth.Data.Healinx.ClinicalResults
-sessionFactoryHelperName: ClinicalResultsHelper
-connectionStringName: HealinxConnectionString
+namespace: HappyExample
+sessionFactoryHelperName: Something
+connectionStringName: BlogDatabaseConnectionString
 schema: dbo
 tables:
-    - name: ClinicalResultSet
-    - name: ClinicalResultPanel
-    - name: ClinicalResult
-    - name: ClinicalResultObservation
-    - name: ClinicalResultObservationDetail
-    - name: ClinicalResultObservationNote
-    - name: ClinicalResultRecipient
+    - name: Blog
+    - name: Comments
+    - name: Users
 ---
