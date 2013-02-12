@@ -72,7 +72,7 @@ Templates can also contain inline code, similar to ASP/JSP, etc:
 	def helloText = <|Hello, |% 
 		def userName = getUsername();
 		if(String.IsNullOrEmpty(userName)
-			userName = "<unknown>"
+			userName = "<unknown>";
 		~userName;
 		%|$! this is some verbatim text!|>;
 	~helloText;
@@ -81,7 +81,7 @@ If the `getUsername()` function returned null, the output would be:
 
 	Hello, <unknown>! This is some verbatim text!
 
-##A More Complete Example:
+###A More Complete Example:
 
 	function generateSimpleInvoice(invoice)
 	{
@@ -91,7 +91,8 @@ If the `getUsername()` function returned null, the output would be:
 	Customer:  $invoice.Customer.Name$
 	
 	Items Purchased:
-		|% for(item in invoice.Items) { |%$"\t"$ Description: $item.Description$, Price: $item.Price$ $"\n" |% 
+		|% for(item in invoice.Items) { 
+			%|$"\t"$ Description: $item.Description$, Price: $item.Price$ $"\n" |% 
 			itemCount = itemCount + 1 
 		} %|
 			Number of items:  $itemCount$
@@ -186,14 +187,14 @@ This would output text similar to the following:
 	for(foo in bar.Widgets where bar.Widget.Age > 1 between "\n\t")
 		~foo.WidgetId ": " foo.Description;
 
-The variable "foo" is being declared here, and like a C# `foreach` loop is scoped to the loop body.  Following the keyword `where` is a boolean expression which is evaluated before each iteration--the loop body will only be executed if it evaluates to true.  Following the `between` keyword is an expression whch will be written to the current output *bewtween* iterations, the solving the "dangling comma" problem (where in logic must exist at the end of a loop body to check if this is the last iteration to prevent a trailing comma, or the trailing comma must be removed after the loop (i.e.:  "1, 2, 3, 4," <-- this trailing comma is awakrd to eliminate without Happy's `between` keyword) and allowing repeated code to be indented at a different level than the code that came before:
+The variable "foo" is being declared here, and like a C# `foreach` loop is scoped to the loop body.  Following the keyword `where` is a boolean expression which is evaluated before each iteration--the loop body will only be executed if it evaluates to true.  Following the `between` keyword is an expression whch will be written to the current output *bewtween* iterations, thus solving the "dangling comma" problem (where in logic must exist at the end of a loop body to check if this is the last iteration to prevent a trailing comma, or the trailing comma must be removed after the loop (i.e.:  "1, 2, 3, 4,") and allowing repeated code to be indented at a different level than the code that came before:
 
 	Widgets older than 1 year:
 		10: Foo
 		12: Bar
 		23: Shazam!
 
-Any string value may be specified as the between text in a `for` loop.
+Any value may be specified as the between text in a `for` loop.  As with any output expression, if it is not a string, the object.ToString() method is called.
 
 ## Object Instantiation:
 
@@ -201,7 +202,7 @@ Object instantiation looks slightly different in Happy than in other languages:
 
 	def newInstance = new(System.DateTime, 2012, 12, 12);
 
-The new keyword looks like a function although it is not actually a function.  The first argument is the type.  The type can be a direct reference to the type in its namespace as in this example or it can be an instance of the System.Type class.
+The new keyword looks like a function although it is not actually a function.  The first argument is the type.  The type can be a direct reference to the type in its namespace as in this example or it can be an instance of the System.Type class.  The remaining arguments are passed to the constructor. 
 
 ##Using Types in .Net Assemblies
 
