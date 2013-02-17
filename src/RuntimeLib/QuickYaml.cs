@@ -72,6 +72,10 @@ namespace Happy.RuntimeLib
                 _sequence = sequence;
             }
 
+
+			/// <summary>
+			/// TODO:  do I need this underscore for some reason?
+			/// </summary>
             public int _count { get { return _sequence.Count; } }
 
             // ReSharper disable UnusedMember.Local

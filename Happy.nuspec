@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Happy</id>
+        <version>0.14.0-alpha</version>
+        <title>Happy</title>
+        <authors>David Lurton</authors>
+        <owners>David Lurton</owners>
+        <projectUrl>https://github.com/dlurton/Happy</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>
+			Happy has JavaScript-like syntax and and includes a special template syntax which can be used to enable your best tendencies for being "effienctly lazy."  With Happy, it's easy to write a generator for any kind of text based output including HTML, XML, CSS, Javascript, C#, VB.Net, SQL, YAML, Java, Markdown, etc, etc. If it's text-based you can write a program in Happy to generate it.  It's also based on the DLR, so you can consume any .Net type and easly interact with it using any .Net language supporting dynamic types (C#, VB.Net, F#, IronRuby, IronPython, etc). This package includes the script engine library.
+		</description>
+        <summary>A scripting language with syntactic sugar for code generation.</summary>
+        <releaseNotes>First nuget release.  Should be considered alpha.</releaseNotes>
+        <copyright>David Lurton 2013</copyright>
+        <language>en-US</language>
+        <tags>Happy Script Interpreter Template DLR Dynamic Language Runtime Generator Code Generation</tags>
+		<dependencies>
+			<dependency id="YamlSerializer" version="1.0" />
+			<dependency id="DynamicLanguageRuntime.Net40.Unofficial" version="2.6.1003.1" />
+		</dependencies>
+	</metadata>
+    <files>
+		<file src="build\Release\ScriptEngine\Happy.*" target="lib\net45"/>
+    </files>
+</package>

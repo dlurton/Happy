@@ -3,6 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B464E384-4B03-46EC-B3EB-65A8F08C2C18}"
 	ProjectSection(SolutionItems) = preProject
+		GlobalAssemblyVersion.cs = GlobalAssemblyVersion.cs
 		Notes.txt = Notes.txt
 		..\README.md = ..\README.md
 	EndProjectSection
@@ -16,6 +17,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeLib.Tests", "RuntimeLib.Tests\RuntimeLib.Tests.csproj", "{026A2A79-71A0-4189-B647-C67B4BAEAE94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLine", "CommandLine\CommandLine.csproj", "{C658558D-4803-4E6B-AEF0-4E096EBF316E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{09330B5E-A8E5-4BCA-B58F-3D74C63F7AEE}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

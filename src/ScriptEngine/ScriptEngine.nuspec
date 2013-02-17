@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+ <metadata>
+        <id>Happy</id>
+        <version>0.10.0.0</version>
+        <title>Happy</title>
+        <authors>David Lurton</authors>
+        <owners>David Lurton</owners>
+        <projectUrl>https://github.com/dlurton/Happy</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>My package description.</description>
+        <summary>A scripting language with syntactic sugar for code generation.</summary>
+        <releaseNotes>First nuget release.  Should be considered alpha.</releaseNotes>
+        <copyright>David Lurton 2013</copyright>
+        <language>en-US</language>
+        <tags>Script, Interpreter, Template, Template Engine, DLR, Dynamic Language Runtime,</tags>
+    </metadata>
+</package>

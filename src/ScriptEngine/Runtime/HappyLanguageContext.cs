@@ -34,7 +34,7 @@ namespace Happy.ScriptEngine.Runtime
 		public TextWriter ErrorOutput { get; private set; }
 		internal HappyBinder Binder { get; private set; }
 		internal HappyOverloadResolverFactory OverloadResolverFactory { get; private set; }
-		public ScriptDomainManager _manager;
+		ScriptDomainManager _manager;
 		public ScriptDomainManager ScriptDomainManager { get { return _manager;  } }
 
 		internal const bool BinderNoThrow = false;

@@ -17,7 +17,7 @@ namespace Happy.ScriptEngine.Runtime.Trackers
 		private readonly string _name;
 		public string Name { get { return _name; } }
 		private string _fullName;
-    	public HappyNamespaceTracker _parent;
+    	HappyNamespaceTracker _parent;
 		readonly Dictionary<string, IHappyTracker> _members = new Dictionary<string, IHappyTracker>();
 
 		public HappyNamespaceTracker(string name) : this(null, name) { }
