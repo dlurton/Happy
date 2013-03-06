@@ -1,5 +1,9 @@
 #Happy - A scripting language with syntactic sugar for code generation
 
+A pre-release version of [happy is available on the public nuget repository](https://www.nuget.org/packages/Happy/), to get it exeucte this command at the package manager console:
+
+	PM> Install-Package Happy -Pre 
+
 ## The Short and Sweet:
 
 * Can be used to quickly and efficiently write a generator for any kind of text based output including HTML, XML, CSS, Javascript, C#, VB.Net, SQL, YAML, Java, Markdown, etc, etc.  If it's text-based you can write a program in Happy to generate it.
